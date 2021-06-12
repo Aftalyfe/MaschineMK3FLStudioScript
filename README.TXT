@@ -1,5 +1,23 @@
 MASCHINE MK3 SCRIPT for FL STUDIO MADE BY Aftalyfe
 
+REQUIREMENTS:
+- FL Studio 20.8.3 version or higher
+- Controller Editor from Native Instruments installed on your machine (install it from Native Access)
+- MASCHINE MK3 controller
+
+Three files need to be downloaded to your machine to use this script: 
+1) SCRIPT (device_MaschineMK3.py)
+2) CHORDSETS (chordsets.py)
+3) FL Studio.ncm3
+
+HOW TO INSTALL
+1) Open Controller Editor. If Maschine MK3 is not currently selected as a controller make sure to select it. Click on Edit > Open and open "FL Studio.ncm3" file. In the list of templates make sure that this one is currently selected. You can close the Controller Editor now.
+2) Using the file browser in your Operating System of choice, browse to your FL Studio User data folder, usually '...Documents\Image-Line\FL Studio\Settings\Hardware\YourScriptSubFolder', where 'YourScriptSubFolder' is a sub folder you created for your script (you can name it however you want). Put BOTH of the other files (ending in .py) in this folder.
+3) Open FL Studio, go to Options > MIDI Settings and find "Maschine MK3 Ctrl MIDI" in the list. Assign any input and output ports (just make sure it's the SAME NUMBER for both input and output). From the "Controller Type" dropdown list change "(generic controller)" into the new script that should appear on the right side of the dropdown menu. The name of the script is "Maschine MK3 (user)"
+4) Make sure that "Enable" button is green.
+
+Your Maschine controller is now ready for use. If nothing is lit up, hold "SHIFT" on your controller and press "CHANNEL(MIDI)". The controller should light up. If nothing happens try turning it off and on from the back of the controller.
+
 PURPOSE:
 To transfer the capability of using a Maschine controller inside Maschine software into FL Studio.
 
