@@ -335,63 +335,72 @@ def OnDeInit():
     return
 
 def OnRefresh(flag):
-    print("Refresh Flag:" + str(flag))
-    if flag == 256: # DIRTY LEDs
-        update_led_state()
-        return
-    if flag == 263: # selecting mixer tracks
-        update_mixer_track()
-        return
-    if flag == 4: # DIRTY MIXER CONTROLS
-        if not controller.plugin_picker_active:
-            update_mixer_values()
-        return
-    if flag == 260: # MAIN RECORDING FLAG
-        if transport.isRecording():
-            device.midiOutMsg(176, 0, 58, 127)
-        else:
-            device.midiOutMsg(176, 0, 58, 0)
-        return
-    if flag == 359 or flag == 375: # LOADING NEW CHANNELS (PLUGINS OR SAMPLES)
-        if controller.padmode == OMNI:
+    try:
+        print("Refresh Flag:" + str(flag))
+        if flag == 256: # DIRTY LEDs
+            update_led_state()
+            return
+        if flag == 263: # selecting mixer tracks
+            update_mixer_track()
+            return
+        if flag == 4: # DIRTY MIXER CONTROLS
+            if not controller.plugin_picker_active:
+                update_mixer_values()
+            return
+        if flag == 260: # MAIN RECORDING FLAG
+            if transport.isRecording():
+                device.midiOutMsg(176, 0, 58, 127)
+            else:
+                device.midiOutMsg(176, 0, 58, 0)
+            return
+        if flag == 359 or flag == 375: # LOADING NEW CHANNELS (PLUGINS OR SAMPLES)
+            if controller.padmode == OMNI:
+                refresh_channels()
+                if not controller.plugin_picker_active:
+                    refresh_chan_screen()
+                return
+            elif controller.padmode == STEP: # LOADING NEW CHANNELS (PLUGINS OR SAMPLES)
+                refresh_grid()
+                if not controller.plugin_picker_active:
+                    refresh_chan_screen()
+                return
+        if flag == 288: # CHANGING CHANNELS
+            if controller.padmode == OMNI:
+                refresh_channels()
+            if controller.padmode == STEP:
+                refresh_grid()
+            if not controller.plugin_picker_active:
+                refresh_chan_screen()
+            update_led_state()
+            return
+        if flag == 311 and controller.padmode == OMNI: # DELETING CHANNELS
             refresh_channels()
             if not controller.plugin_picker_active:
                 refresh_chan_screen()
             return
-        elif controller.padmode == STEP: # LOADING NEW CHANNELS (PLUGINS OR SAMPLES)
+        if flag == 1024 or flag == 1056 or flag == 1280 and controller.padmode == STEP: # changing steps
             refresh_grid()
+            return
+        if flag == 295:
             if not controller.plugin_picker_active:
                 refresh_chan_screen()
+            update_led_state()
             return
-    if flag == 288: # CHANGING CHANNELS
-        if controller.padmode == OMNI:
-            refresh_channels()
-        if controller.padmode == STEP:
-            refresh_grid()
-        if not controller.plugin_picker_active:
-            refresh_chan_screen()
-        update_led_state()
-        return
-    if flag == 311 and controller.padmode == OMNI: # DELETING CHANNELS
-        refresh_channels()
-        if not controller.plugin_picker_active:
-            refresh_chan_screen()
-        return
-    if flag == 1024 or flag == 1056 or flag == 1280 and controller.padmode == STEP: # changing steps
-        refresh_grid()
-        return
-    if flag == 295:
-        if not controller.plugin_picker_active:
-            refresh_chan_screen()
-        update_led_state()
-        return
-    if flag == 32:
-        if not controller.plugin_picker_active:
-            refresh_chan_screen()
-        update_led_state()
-        return
-
-    #print("Unhandled flag:" + str(flag))
+        if flag == 32:
+            if not controller.plugin_picker_active:
+                refresh_chan_screen()
+            update_led_state()
+            return
+    
+        #print("Unhandled flag:" + str(flag))
+    except TypeError as e:
+        # Heavy-handed error handling of "Operation unsafe at current time" exceptions
+        # we just discard all exceptions with that message - it's a bit of a yikes, and
+        # ideally we'd prevent the issue from happening in the first place, but it'll do
+        if e.args != ("Operation unsafe at current time",):
+            # Raise errors without those args, or we could obscure some issues that probably should
+            # be caught during development
+            raise e
 
 def OnMidiIn(event):
     # print_midi_info(event)
